@@ -1,15 +1,13 @@
-// Display existing webhooks
 function displayWebhooks() {
   chrome.storage.sync.get('webhooks', function(data) {
     var webhooksDiv = document.getElementById('webhooks');
-    webhooksDiv.innerHTML = ''; // Clear existing
+    webhooksDiv.innerHTML = '';
     var webhooks = data.webhooks || [];
     webhooks.forEach(function(webhook, index) {
       var div = document.createElement('div');
-      var truncatedWebhook = webhook.length > 40 ? webhook.substring(0, 40) + '...' : webhook; // increased to 40 characters
+      var truncatedWebhook = webhook.length > 40 ? webhook.substring(0, 40) + '...' : webhook;
       div.textContent = truncatedWebhook;
       
-      // Create remove button
       var removeButton = document.createElement('button');
       removeButton.textContent = 'Remove';
       removeButton.onclick = function() {
@@ -26,22 +24,18 @@ function displayWebhooks() {
 document.addEventListener('DOMContentLoaded', function() {
   displayWebhooks();
 
-  // Add new webhook
   document.getElementById('addWebhook').addEventListener('click', function() {
     var newWebhook = document.getElementById('newWebhook').value;
-    if (newWebhook.startsWith('https://discord.com/api/webhooks/')) { // Check the pattern
+    if (newWebhook.startsWith('https://discord.com/api/webhooks/')) {
       chrome.storage.sync.get('webhooks', function(data) {
         var webhooks = data.webhooks || [];
         webhooks.push(newWebhook);
         chrome.storage.sync.set({ 'webhooks': webhooks }, function() {
-          // Display confirmation message
           var confirmationMessage = document.getElementById('confirmationMessage');
           confirmationMessage.textContent = "Webhook added successfully!";
           
-          // Clear the input field
           document.getElementById('newWebhook').value = '';
 
-          // Refresh the displayed webhooks
           displayWebhooks();
         });
       });
