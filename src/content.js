@@ -49,48 +49,48 @@ function handleTwitter() {
   setInterval(changeMenuItem, 100);
 }
 
+
 function handleInstagram() {
   function changeMenuItem() {
-    const buttons = document.querySelectorAll('button.IGCoreDialog._a9--._a9_1');
-    for (const button of buttons) {
-      if (button.textContent === "Embed" && !button.dataset.modified) {
-        button.textContent = 'Post to Discord';
-        button.dataset.modified = "true";
+    const buttons = document.querySelectorAll('button._a9--._a9_1');
+    const embedButton = buttons[4]; // Targeting the fifth button
 
-        button.onclick = function(event) {
-          event.stopPropagation();
-          event.preventDefault();
+    if (embedButton && embedButton.textContent.trim() === "Embed" && !embedButton.dataset.modified) {
+      embedButton.textContent = 'Post to Discord';
+      embedButton.dataset.modified = "true";
 
-          const copyLinkButton = Array.from(buttons).find(btn => btn.textContent === "Copy link");
-          if (copyLinkButton) copyLinkButton.click();
+      embedButton.onclick = function(event) {
+        event.stopPropagation();
+        event.preventDefault();
 
-          new Promise(res => setTimeout(res, 100))
-            .then(() => navigator.clipboard.readText())
-            .then(copiedLink => {
-              if (!chrome.runtime) {
-                console.error("Chrome runtime is not available");
-                return;
-              }
+        const copyLinkButton = Array.from(buttons).find(btn => btn.textContent.trim() === "Copy link");
+        if (copyLinkButton) copyLinkButton.click();
 
-              if (copiedLink && copiedLink.includes('instagram.com')) {
-                copiedLink = copiedLink.replace('instagram.com', 'ddinstagram.com');
-              }
+        new Promise(res => setTimeout(res, 100))
+          .then(() => navigator.clipboard.readText())
+          .then(copiedLink => {
+            if (!chrome.runtime) {
+              console.error("Chrome runtime is not available");
+              return;
+            }
 
-              if (copiedLink) {
-                chrome.runtime.sendMessage({ action: 'postInstagram', url: copiedLink }, (response) => {});
-              } else {
-                console.error("Link not found");
-              }
-            });
-        };
+            if (copiedLink && copiedLink.includes('instagram.com')) {
+              copiedLink = copiedLink.replace('instagram.com', 'ddinstagram.com');
+            }
 
-        break;
-      }
+            if (copiedLink) {
+              chrome.runtime.sendMessage({ action: 'postInstagram', url: copiedLink }, (response) => {});
+            } else {
+              console.error("Link not found");
+            }
+          });
+      };
     }
   }
 
   setInterval(changeMenuItem, 100);
 }
+
 
 
 if (window.location.hostname === 'twitter.com') {
