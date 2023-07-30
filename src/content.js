@@ -53,7 +53,7 @@ function handleTwitter() {
 function handleInstagram() {
   function changeMenuItem() {
     const buttons = document.querySelectorAll('button._a9--._a9_1');
-    const embedButton = buttons[4]; // Targeting the fifth button
+    const embedButton = buttons[4];
 
     if (embedButton && embedButton.textContent.trim() === "Embed" && !embedButton.dataset.modified) {
       embedButton.textContent = 'Post to Discord';
