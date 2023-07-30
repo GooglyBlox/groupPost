@@ -2,7 +2,7 @@ body {
     font-family: 'Arial', sans-serif;
     background-color: #fafafa;
     padding: 15px;
-    width: 300px; /* Increased the width */
+    width: 300px;
   }
 
   .webhooks-list div {
@@ -35,7 +35,7 @@ body {
     border-radius: 4px;
     width: 100%;
     box-sizing: border-box;
-    margin-bottom: 10px; /* Added a margin */
+    margin-bottom: 10px;
   }
   
   #addWebhook {
