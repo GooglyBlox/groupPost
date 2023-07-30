@@ -1,50 +1,40 @@
-// This variable will hold the tweet link that corresponds to the clicked menu button
-let clickedTweetLink = null;
+function handleTwitter() {
+  let clickedTweetLink = null;
 
-// Attach click event listener to all menu buttons
-function attachMenuButtonClickListener() {
-  const menuButtons = document.querySelectorAll('div[data-testid="caret"]');
-  menuButtons.forEach((button) => {
-    button.addEventListener('click', function(event) {
-      // Navigate up to the tweet article element
-      let tweetElement = event.target.closest('article[role="article"]');
-      
-      // Find the tweet's link inside the corresponding tweet
-      if (tweetElement) {
-        const tweetLinkElement = tweetElement.querySelector('a[href*="/status/"]');
-        if (tweetLinkElement) {
-          clickedTweetLink = tweetLinkElement.href;
+  function attachMenuButtonClickListener() {
+    const menuButtons = document.querySelectorAll('div[data-testid="caret"]');
+    menuButtons.forEach((button) => {
+      if (button.dataset.listenerAdded) return;
+      button.addEventListener('click', function (event) {
+        let tweetElement = event.target.closest('article[role="article"]');
+        if (tweetElement) {
+          const tweetLinkElement = tweetElement.querySelector('a[href*="/status/"]');
+          if (tweetLinkElement) {
+            clickedTweetLink = tweetLinkElement.href;
+          }
         }
-      }
+      });
+      button.dataset.listenerAdded = "true";
     });
-  });
-}
+  }
 
-function changeMenuItem() {
+  function changeMenuItem() {
     const menuItems = document.querySelectorAll('div[role="menuitem"]');
-  
+
     for (const item of menuItems) {
       const spanElement = item.querySelector('span');
-  
+
       if (spanElement && spanElement.textContent === "Embed Tweet") {
-        spanElement.innerText = 'Post to Discord'; // Update the text to "Post to Discord"
-  
-        // Check if the item is already modified
+        spanElement.innerText = 'Post to Discord';
         if (item.dataset.modified) continue;
-  
-        item.dataset.modified = "true"; // Mark the item as modified
-  
-        item.onclick = function(event) {
+        item.dataset.modified = "true";
+
+        item.onclick = function (event) {
           event.stopPropagation();
           event.preventDefault();
-        
+
           if (clickedTweetLink) {
-            console.log("Tweet Link Captured:", clickedTweetLink); // Debugging line
-        
-            // Send the tweet URL to the background script
-            chrome.runtime.sendMessage({ action: 'postTweet', url: clickedTweetLink }, (response) => {
-              console.log("Background Response:", response); // Debugging line
-            });
+            chrome.runtime.sendMessage({ action: 'postTweet', url: clickedTweetLink }, (response) => {});
           } else {
             console.error("Tweet link not found");
           }
@@ -52,8 +42,59 @@ function changeMenuItem() {
       }
     }
   }
-  
-  // Continuously check and modify the menu item
-  setInterval(attachMenuButtonClickListener, 1000);
+
+  const observer = new MutationObserver(attachMenuButtonClickListener);
+  observer.observe(document.body, { childList: true, subtree: true });
+
   setInterval(changeMenuItem, 100);
-  
+}
+
+function handleInstagram() {
+  function changeMenuItem() {
+    const buttons = document.querySelectorAll('button.IGCoreDialog._a9--._a9_1');
+    for (const button of buttons) {
+      if (button.textContent === "Embed" && !button.dataset.modified) {
+        button.textContent = 'Post to Discord';
+        button.dataset.modified = "true";
+
+        button.onclick = function(event) {
+          event.stopPropagation();
+          event.preventDefault();
+
+          const copyLinkButton = Array.from(buttons).find(btn => btn.textContent === "Copy link");
+          if (copyLinkButton) copyLinkButton.click();
+
+          new Promise(res => setTimeout(res, 100))
+            .then(() => navigator.clipboard.readText())
+            .then(copiedLink => {
+              if (!chrome.runtime) {
+                console.error("Chrome runtime is not available");
+                return;
+              }
+
+              if (copiedLink && copiedLink.includes('instagram.com')) {
+                copiedLink = copiedLink.replace('instagram.com', 'ddinstagram.com');
+              }
+
+              if (copiedLink) {
+                chrome.runtime.sendMessage({ action: 'postInstagram', url: copiedLink }, (response) => {});
+              } else {
+                console.error("Link not found");
+              }
+            });
+        };
+
+        break;
+      }
+    }
+  }
+
+  setInterval(changeMenuItem, 100);
+}
+
+
+if (window.location.hostname === 'twitter.com') {
+  handleTwitter();
+} else if (window.location.hostname.includes('instagram.com')) {
+  handleInstagram();
+}
