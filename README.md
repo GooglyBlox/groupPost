@@ -2,6 +2,8 @@
   <img width="200" height="200" src="https://github.com/GooglyBlox/groupPost/blob/main/src/images/groupPost-logo.png?raw=true">
 </p>
 
+> *I AM NOT LIABLE FOR YOU MISUSING THIS APPLICATION AND EXCEEDING RATE LIMITS. ALWAYS KEEP API LIMITS IN MIND.*
+
 # groupPost
 
 Streamline your social media sharing with groupPost! This browser extension enables you to instantly send posts from Twitter and Instagram directly to Discord via webhooks.
