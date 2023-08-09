@@ -1,7 +1,7 @@
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   console.log("Received request in background script:", request);
 
-  if (request.action === 'postTweet' || request.action === 'postInstagram') {
+  if (request.action === 'postTweet' || request.action === 'postInstagram' || request.action === 'postTikTok') {
     chrome.storage.sync.get('webhooks', function(data) {
       var webhooks = data.webhooks || [];
 
