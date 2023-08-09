@@ -6,14 +6,15 @@
 
 # groupPost
 
-Streamline your social media sharing with groupPost! This browser extension enables you to instantly send posts from Twitter and Instagram directly to Discord via webhooks.
+Streamline your social media sharing with groupPost! This browser extension enables you to instantly send posts from Twitter, Instagram, and TikTok directly to Discord via webhooks.
 
 ## Overview
-The groupPost extension facilitates sharing content from social media platforms like Twitter and Instagram to Discord. By adding context menu options, users can directly post tweets or Instagram posts to Discord channels using webhooks stored locally in the extension, which you can add and remove by  clicking the extension's icon in your extension bar.
+The groupPost extension facilitates sharing content from social media platforms to Discord. By adding context menu options, users can directly post tweets, Instagram posts, or TikTok reels to Discord channels using webhooks stored locally in the extension, which you can add and remove by  clicking the extension's icon in your extension bar.
 
 ## Features
 - **Twitter Integration**: Easily post tweets to Discord by clicking a new "Post to Discord" menu item.  
 - **Instagram Integration**: Share Instagram posts to Discord with a similar menu option.
+- **TikTok Integration**: Share TikTok reels to Discord by hovering over the "Share" button clicking the new "Post to Discord" menu item
 
 ## Steps
 1. Clone this repository to your local machine.  
@@ -30,11 +31,14 @@ The groupPost extension facilitates sharing content from social media platforms 
 1. Click the three dots on the top right of the desired tweet.
 2. Click the "Post to Discord" menu option.
 3. The tweet will be posted to the configured Discord channel(s).
-### Posting an Instagram Post to Discord
+### Posting an Instagram post to Discord
 1. Click the three dots on the top right of the desired post.
 2. Click the "Post to Discord" menu option
 3. The Instagram post will be posted to the configured Discord channel(s).
-
+### Posting a TikTok reel to Discord
+1. Click the "Share" icon on the bottom right of the desired post.
+2. Click the "Post to Discord" menu option
+3. The TikTok post will be posted to the configured Discord channel(s).
 
 ## Acknowledgements
 
