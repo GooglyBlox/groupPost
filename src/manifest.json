@@ -14,7 +14,7 @@
   },
   "content_scripts": [
     {
-      "matches": ["*://twitter.com/*", "*://www.instagram.com/*"],
+      "matches": ["*://twitter.com/*", "*://www.instagram.com/*", "*://www.tiktok.com/*"],
       "js": ["content.js"]
     }
   ],
