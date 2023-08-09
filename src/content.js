@@ -2,6 +2,7 @@ function handleTwitter() {
   let clickedTweetLink = null;
 
   function attachMenuButtonClickListener() {
+    console.log("Attaching menu button click listeners");
     const menuButtons = document.querySelectorAll('div[data-testid="caret"]');
     menuButtons.forEach((button) => {
       if (button.dataset.listenerAdded) return;
@@ -11,6 +12,7 @@ function handleTwitter() {
           const tweetLinkElement = tweetElement.querySelector('a[href*="/status/"]');
           if (tweetLinkElement) {
             clickedTweetLink = tweetLinkElement.href;
+            console.log("Clicked tweet link found:", clickedTweetLink);
           }
         }
       });
@@ -19,12 +21,13 @@ function handleTwitter() {
   }
 
   function changeMenuItem() {
+    console.log("Changing menu items");
     const menuItems = document.querySelectorAll('div[role="menuitem"]');
 
     for (const item of menuItems) {
       const spanElement = item.querySelector('span');
 
-      if (spanElement && spanElement.textContent === "Embed Tweet") {
+      if (spanElement && spanElement.textContent === "Embed post") {
         spanElement.innerText = 'Post to Discord';
         if (item.dataset.modified) continue;
         item.dataset.modified = "true";
@@ -34,6 +37,7 @@ function handleTwitter() {
           event.preventDefault();
 
           if (clickedTweetLink) {
+            console.log("Sending tweet link to Discord:", clickedTweetLink);
             chrome.runtime.sendMessage({ action: 'postTweet', url: clickedTweetLink }, (response) => {});
           } else {
             console.error("Tweet link not found");
@@ -48,6 +52,7 @@ function handleTwitter() {
 
   setInterval(changeMenuItem, 100);
 }
+
 
 
 function handleInstagram() {
@@ -91,10 +96,43 @@ function handleInstagram() {
   setInterval(changeMenuItem, 100);
 }
 
+function handleTikTok() {
+  function changeMenuItem() {
+    const embedButton = document.querySelector('a[data-e2e="video-share-embed"]');
+
+    if (embedButton && embedButton.querySelector('.tiktok-1qov91f-SpanShareText').textContent === "Embed") {
+      embedButton.querySelector('.tiktok-1qov91f-SpanShareText').textContent = 'Post to Discord';
+      embedButton.onclick = async function (event) {
+        event.stopPropagation();
+        event.preventDefault();
+
+        const copyLinkButton = document.querySelector('a[data-e2e="video-share-copy"]');
+        if (copyLinkButton) {
+          copyLinkButton.click();
+
+          await new Promise(res => setTimeout(res, 500));
+
+          const copiedLink = await navigator.clipboard.readText();
+          if (copiedLink) {
+            console.log("Copied link:", copiedLink);
+            chrome.runtime.sendMessage({ action: 'postTikTok', url: copiedLink }, (response) => {});
+          } else {
+            console.error("Video URL not found");
+          }
+        }
+      };
+    }
+  }
+
+  setInterval(changeMenuItem, 100);
+}
+
 
 
 if (window.location.hostname === 'twitter.com') {
   handleTwitter();
 } else if (window.location.hostname.includes('instagram.com')) {
   handleInstagram();
+} else if (window.location.hostname.includes('tiktok.com')) {
+  handleTikTok();
 }
