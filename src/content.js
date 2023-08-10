@@ -99,34 +99,53 @@ function handleInstagram() {
 function handleTikTok() {
   function changeMenuItem() {
     const embedButton = document.querySelector('a[data-e2e="video-share-embed"]');
+    if (embedButton) {
+      const spanShareText = embedButton.querySelector('.tiktok-1qov91f-SpanShareText');
+      if (spanShareText && spanShareText.textContent === "Embed") {
+        spanShareText.textContent = 'Post to Discord';
+        embedButton.onclick = async function (event) {
+          event.stopPropagation();
+          event.preventDefault();
 
-    if (embedButton && embedButton.querySelector('.tiktok-1qov91f-SpanShareText').textContent === "Embed") {
-      embedButton.querySelector('.tiktok-1qov91f-SpanShareText').textContent = 'Post to Discord';
-      embedButton.onclick = async function (event) {
+          const copyLinkButton = document.querySelector('a[data-e2e="video-share-copy"]');
+          if (copyLinkButton) {
+            copyLinkButton.click();
+
+            await new Promise(res => setTimeout(res, 500));
+
+            const copiedLink = await navigator.clipboard.readText();
+            if (copiedLink) {
+              console.log("Copied link:", copiedLink);
+              chrome.runtime.sendMessage({ action: 'postTikTok', url: copiedLink }, (response) => {});
+            } else {
+              console.error("Video URL not found");
+            }
+          }
+        };
+      }
+    }
+
+    const tooltipInnerDivs = document.querySelectorAll('div.css-127r7bb-inner[role="tooltip"]');
+    tooltipInnerDivs.forEach((div) => {
+      if (div.textContent === "Embed") {
+        div.textContent = 'Discord';
+      }
+    });
+
+    const newEmbedButton = document.querySelector('a.tiktok-vy3jtp-AShareLink');
+    if (newEmbedButton && !newEmbedButton.dataset.modified) {
+      newEmbedButton.dataset.modified = "true";
+      newEmbedButton.onclick = function (event) {
         event.stopPropagation();
         event.preventDefault();
-
-        const copyLinkButton = document.querySelector('a[data-e2e="video-share-copy"]');
-        if (copyLinkButton) {
-          copyLinkButton.click();
-
-          await new Promise(res => setTimeout(res, 500));
-
-          const copiedLink = await navigator.clipboard.readText();
-          if (copiedLink) {
-            console.log("Copied link:", copiedLink);
-            chrome.runtime.sendMessage({ action: 'postTikTok', url: copiedLink }, (response) => {});
-          } else {
-            console.error("Video URL not found");
-          }
-        }
+        const currentWebPageLink = window.location.href;
+        chrome.runtime.sendMessage({ action: 'postTikTok', url: currentWebPageLink }, (response) => {});
       };
     }
   }
 
   setInterval(changeMenuItem, 100);
 }
-
 
 
 if (window.location.hostname === 'twitter.com') {
