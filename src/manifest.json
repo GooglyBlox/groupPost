@@ -1,16 +1,16 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "groupPost",
   "description": "Streamline your social media sharing with groupPost! This extension enables you to instantly send posts from Twitter and Instagram directly to Discord via webhooks.",
   "version": "1.0",
-  "permissions": ["activeTab", "storage", "clipboardRead", "clipboardWrite"],
+  "permissions": ["activeTab", "storage"],
+  "host_permissions": ["*://twitter.com/*", "*://www.instagram.com/*", "*://www.tiktok.com/*"],
   "icons": {
     "48": "images/icon48.png",
     "128": "images/icon128.png"
   },
   "background": {
-    "scripts": ["background.js"],
-    "persistent": true
+    "service_worker": "background.js"
   },
   "content_scripts": [
     {
@@ -18,7 +18,7 @@
       "js": ["content.js"]
     }
   ],
-  "browser_action": {
+  "action": {
     "default_popup": "popup.html",
     "default_icon": {
       "48": "images/icon48.png"
